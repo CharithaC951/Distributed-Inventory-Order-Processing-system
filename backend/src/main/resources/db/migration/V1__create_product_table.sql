@@ -1,0 +1,5 @@
+CREATE TABLE product (
+ id BIGINT PRIMARY KEY,
+ name VARCHAR(255) NOT NULL,
+ stock_quantity INTEGER NOT NULL
+);
