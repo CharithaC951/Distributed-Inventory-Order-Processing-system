@@ -27,4 +27,4 @@ jobs:
         run: chmod +x mvnw
 
       - name: Build Backend
-        run: ./mvnw clean install -DskipTests
+        run: ./mvnw clean verify -DskipTests=false
