@@ -1,12 +1,12 @@
 package com.charitha.inventory.controller;
 
+import com.charitha.inventory.dto.CreateOrderRequest;
 import com.charitha.inventory.entity.Order;
-import com.charitha.inventory.entity.OrderItem;
 import com.charitha.inventory.service.OrderService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -21,7 +21,19 @@ public class OrderController {
     }
 
     @PostMapping
-    public Order createOrder(@RequestBody List<OrderItem> items) {
-        return orderService.createOrder(items);
+    @PreAuthorize("hasRole('ADMIN')")
+    @ResponseStatus(HttpStatus.CREATED)
+    public Order createOrder(@Valid @RequestBody CreateOrderRequest request) {
+        return orderService.createOrder(request);
+    }
+
+    @GetMapping
+    public List<Order> getOrders() {
+        return orderService.getAllOrders();
+    }
+
+    @GetMapping("/{id}")
+    public Order getOrderById(@PathVariable Long id) {
+        return orderService.getOrderById(id);
     }
 }

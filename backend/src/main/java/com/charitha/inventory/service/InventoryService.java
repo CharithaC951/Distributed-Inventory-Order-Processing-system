@@ -21,7 +21,7 @@ public class InventoryService {
         if (quantity <= 0) {
             throw new InvalidQuantityException(quantity);
         }
-        Product product = productRepository.findById(productId)
+        Product product = productRepository.findByIdForUpdate(productId)
                 .orElseThrow(() -> new ProductNotFoundException(productId));
 
         if (quantity > product.getStockQuantity()) {
@@ -37,7 +37,7 @@ public class InventoryService {
         if(quantity <=0){
             throw new InvalidQuantityException(quantity);
         }
-        Product product = productRepository.findById(productId)
+        Product product = productRepository.findByIdForUpdate(productId)
                 .orElseThrow(() -> new ProductNotFoundException(productId));
 
         product.setStockQuantity(product.getStockQuantity()+quantity);

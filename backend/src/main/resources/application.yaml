@@ -17,3 +17,7 @@ spring:
 
   flyway:
     enabled: true
+
+  properties:
+    jwt.secret=bXlTdXBlclNlY3JldEtleUZvckp3dFRva2VuR2VuZXJhdGlvbjEyMzQ1Njc4OTA=
+    jwt.expiration=3600000

@@ -31,7 +31,7 @@ class InventoryServiceTest {
     void shouldDecreaseStockWhenEnoughInventoryExists() {
         Product product = new Product(1L, "Laptop", 10);
 
-        when(productRepository.findById(1L)).thenReturn(Optional.of(product));
+        when(productRepository.findByIdForUpdate(1L)).thenReturn(Optional.of(product));
 
         inventoryService.decreaseStock(1L, 3);
 
@@ -44,7 +44,7 @@ class InventoryServiceTest {
     void shouldThrowExceptionWhenStockIsInsufficient(){
         Product product = new Product(1L, "Laptop", 3);
 
-        when(productRepository.findById(1L)).thenReturn(Optional.of(product));
+        when(productRepository.findByIdForUpdate(1L)).thenReturn(Optional.of(product));
 
         assertThrows(InsufficientStockException.class, () ->
                 inventoryService.decreaseStock(1L, 5)
@@ -58,13 +58,13 @@ class InventoryServiceTest {
         assertThrows(InvalidQuantityException.class, () ->
                 inventoryService.decreaseStock(1L, 0)
         );
-        verify(productRepository, never()).findById(1L);
+        verify(productRepository, never()).findByIdForUpdate(1L);
         verify(productRepository, never()).save(any());
     }
 
     @Test
     void shouldThrowExceptionWhenProductDoesNotExist() {
-        when(productRepository.findById(1L)).thenReturn(Optional.empty());
+        when(productRepository.findByIdForUpdate(1L)).thenReturn(Optional.empty());
 
         assertThrows(ProductNotFoundException.class, () ->
                 inventoryService.decreaseStock(1L, 2)
@@ -77,7 +77,7 @@ class InventoryServiceTest {
     void shouldIncreaseStockWhenValidQuantityIsProvided(){
         Product product = new Product(1L, "Laptop", 10);
 
-        when(productRepository.findById(1L)).thenReturn(Optional.of(product));
+        when(productRepository.findByIdForUpdate(1L)).thenReturn(Optional.of(product));
 
         inventoryService.increaseStock(1L,5);
 
@@ -91,13 +91,13 @@ class InventoryServiceTest {
                 inventoryService.increaseStock(1L, 0)
         );
 
-        verify(productRepository, never()).findById(1L);
+        verify(productRepository, never()).findByIdForUpdate(1L);
         verify(productRepository, never()).save(any());
     }
 
     @Test
     void shouldThrowExceptionWhenIncreasingStockForNonExistingProduct() {
-        when(productRepository.findById(1L)).thenReturn(Optional.empty());
+        when(productRepository.findByIdForUpdate(1L)).thenReturn(Optional.empty());
 
         assertThrows(ProductNotFoundException.class, () ->
                 inventoryService.increaseStock(1L, 5)
