@@ -1,6 +1,8 @@
 package com.charitha.inventory.controller;
 
 import com.charitha.inventory.entity.Product;
+import com.charitha.inventory.security.JwtAuthFilter;
+import com.charitha.inventory.service.JwtService;
 import com.charitha.inventory.service.ProductService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +28,12 @@ public class ProductControllerTest {
 
     @MockitoBean
     private ProductService productService;
+
+    @MockitoBean
+    private JwtService jwtService;
+
+    @MockitoBean
+    private JwtAuthFilter jwtAuthFilter;
 
     @Test
     void shouldCreateProduct() throws Exception {
