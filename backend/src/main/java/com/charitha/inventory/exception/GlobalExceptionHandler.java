@@ -25,4 +25,10 @@ public class GlobalExceptionHandler {
     public Map<String, String> handleInvalidQuantity(InvalidQuantityException ex) {
         return Map.of("error", ex.getMessage());
     }
+
+    @ExceptionHandler(OrderNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Map<String, String> handleOrderNotFound(OrderNotFoundException ex) {
+        return Map.of("error", ex.getMessage());
+    }
 }

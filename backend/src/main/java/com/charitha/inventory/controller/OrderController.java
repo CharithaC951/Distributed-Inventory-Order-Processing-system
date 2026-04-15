@@ -1,7 +1,7 @@
 package com.charitha.inventory.controller;
 
 import com.charitha.inventory.dto.CreateOrderRequest;
-import com.charitha.inventory.entity.Order;
+import com.charitha.inventory.dto.OrderResponse;
 import com.charitha.inventory.service.OrderService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -23,17 +23,19 @@ public class OrderController {
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.CREATED)
-    public Order createOrder(@Valid @RequestBody CreateOrderRequest request) {
+    public OrderResponse createOrder(@Valid @RequestBody CreateOrderRequest request) {
         return orderService.createOrder(request);
     }
 
     @GetMapping
-    public List<Order> getOrders() {
+    @PreAuthorize("hasRole('ADMIN')")
+    public List<OrderResponse> getOrders() {
         return orderService.getAllOrders();
     }
 
     @GetMapping("/{id}")
-    public Order getOrderById(@PathVariable Long id) {
+    @PreAuthorize("hasRole('ADMIN')")
+    public OrderResponse getOrderById(@PathVariable Long id) {
         return orderService.getOrderById(id);
     }
 }
