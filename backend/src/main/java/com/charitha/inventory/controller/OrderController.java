@@ -38,4 +38,16 @@ public class OrderController {
     public OrderResponse getOrderById(@PathVariable Long id) {
         return orderService.getOrderById(id);
     }
+
+    @PatchMapping("/{id}/confirm")
+    @PreAuthorize("hasRole('ADMIN')")
+    public OrderResponse confirmOrder(@PathVariable Long id) {
+        return orderService.confirmOrder(id);
+    }
+
+    @PatchMapping("/{id}/cancel")
+    @PreAuthorize("hasRole('ADMIN')")
+    public OrderResponse cancelOrder(@PathVariable Long id) {
+        return orderService.cancelOrder(id);
+    }
 }

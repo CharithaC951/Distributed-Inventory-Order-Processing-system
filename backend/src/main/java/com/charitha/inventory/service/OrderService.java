@@ -6,6 +6,7 @@ import com.charitha.inventory.dto.OrderItemResponse;
 import com.charitha.inventory.dto.OrderResponse;
 import com.charitha.inventory.entity.Order;
 import com.charitha.inventory.entity.OrderItem;
+import com.charitha.inventory.entity.OrderStatus;
 import com.charitha.inventory.repository.OrderRepository;
 import com.charitha.inventory.security.TenantContext;
 import org.springframework.stereotype.Service;
@@ -30,6 +31,7 @@ public class OrderService {
     @Transactional
     public OrderResponse createOrder(CreateOrderRequest request) {
         Order order = new Order();
+        order.setStatus(OrderStatus.CREATED);
         order.setTenantId(TenantContext.getTenantId());
 
         for (CreateOrderItemRequest itemRequest : request.getItems()) {
@@ -73,7 +75,32 @@ public class OrderService {
                 order.getId(),
                 order.getItems().stream()
                         .map(item -> new OrderItemResponse(item.getProductId(), item.getQuantity()))
-                        .toList()
+                        .toList(),
+                order.getStatus().name()
         );
+    }
+
+    public OrderResponse confirmOrder(Long id) {
+        Long tenantId = TenantContext.getTenantId();
+
+        Order order = orderRepository.findByIdAndTenantId(id, tenantId)
+                .orElseThrow(() -> new OrderNotFoundException("Order not found with id: " + id));
+
+        order.setStatus(OrderStatus.CONFIRMED);
+        Order savedOrder = orderRepository.save(order);
+
+        return mapToResponse(savedOrder);
+    }
+
+    public OrderResponse cancelOrder(Long id) {
+        Long tenantId = TenantContext.getTenantId();
+
+        Order order = orderRepository.findByIdAndTenantId(id, tenantId)
+                .orElseThrow(() -> new OrderNotFoundException("Order not found with id: " + id));
+
+        order.setStatus(OrderStatus.CANCELLED);
+        Order savedOrder = orderRepository.save(order);
+
+        return mapToResponse(savedOrder);
     }
 }

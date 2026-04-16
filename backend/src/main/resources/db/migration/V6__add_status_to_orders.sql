@@ -1,0 +1,2 @@
+ALTER TABLE orders ADD COLUMN status VARCHAR(50);
+UPDATE orders SET status = 'CREATED' WHERE status IS NULL;
