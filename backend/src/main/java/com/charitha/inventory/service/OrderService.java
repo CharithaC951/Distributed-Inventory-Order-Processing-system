@@ -7,6 +7,7 @@ import com.charitha.inventory.dto.OrderResponse;
 import com.charitha.inventory.entity.Order;
 import com.charitha.inventory.entity.OrderItem;
 import com.charitha.inventory.repository.OrderRepository;
+import com.charitha.inventory.security.TenantContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.charitha.inventory.exception.OrderNotFoundException;
@@ -29,6 +30,7 @@ public class OrderService {
     @Transactional
     public OrderResponse createOrder(CreateOrderRequest request) {
         Order order = new Order();
+        order.setTenantId(TenantContext.getTenantId());
 
         for (CreateOrderItemRequest itemRequest : request.getItems()) {
             inventoryService.decreaseStock(
@@ -49,14 +51,18 @@ public class OrderService {
     }
 
     public List<OrderResponse> getAllOrders() {
-        return orderRepository.findAll()
+        Long tenantId = TenantContext.getTenantId();
+
+        return orderRepository.findByTenantId(tenantId)
                 .stream()
                 .map(this::mapToResponse)
                 .toList();
     }
 
     public OrderResponse getOrderById(Long id) {
-        Order order = orderRepository.findById(id)
+        Long tenantId = TenantContext.getTenantId();
+
+        Order order = orderRepository.findByIdAndTenantId(id, tenantId)
                 .orElseThrow(() -> new OrderNotFoundException("Order not found with id: " + id));
 
         return mapToResponse(order);

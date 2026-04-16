@@ -5,6 +5,7 @@ import com.charitha.inventory.exception.InsufficientStockException;
 import com.charitha.inventory.exception.InvalidQuantityException;
 import com.charitha.inventory.exception.ProductNotFoundException;
 import com.charitha.inventory.repository.ProductRepository;
+import com.charitha.inventory.security.TenantContext;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -21,7 +22,7 @@ public class InventoryService {
         if (quantity <= 0) {
             throw new InvalidQuantityException(quantity);
         }
-        Product product = productRepository.findByIdForUpdate(productId)
+        Product product = productRepository.findByIdAndTenantId(productId, TenantContext.getTenantId())
                 .orElseThrow(() -> new ProductNotFoundException(productId));
 
         if (quantity > product.getStockQuantity()) {
@@ -37,7 +38,7 @@ public class InventoryService {
         if(quantity <=0){
             throw new InvalidQuantityException(quantity);
         }
-        Product product = productRepository.findByIdForUpdate(productId)
+        Product product = productRepository.findByIdAndTenantId(productId, TenantContext.getTenantId())
                 .orElseThrow(() -> new ProductNotFoundException(productId));
 
         product.setStockQuantity(product.getStockQuantity()+quantity);

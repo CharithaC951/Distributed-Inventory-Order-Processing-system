@@ -41,6 +41,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         try {
             String username = jwtService.extractUsername(token);
             String role = jwtService.extractRole(token);
+            Long tenantId = jwtService.extractTenantId(token);
 
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 UsernamePasswordAuthenticationToken authentication =
@@ -52,11 +53,13 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
+                TenantContext.setTenantId(tenantId);
             }
         } catch (Exception e) {
             SecurityContextHolder.clearContext();
+        } finally {
+            filterChain.doFilter(request, response);
+            TenantContext.clear();
         }
-
-        filterChain.doFilter(request, response);
     }
 }

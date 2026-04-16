@@ -15,6 +15,8 @@ public class Order {
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> items = new ArrayList<>();
 
+    private Long tenantId;
+
     public Order() {}
 
     public Order(List<OrderItem> items) {
@@ -23,6 +25,14 @@ public class Order {
 
     public Long getId() {
         return id;
+    }
+
+    public Long getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(Long tenantId) {
+        this.tenantId = tenantId;
     }
 
     public List<OrderItem> getItems() {

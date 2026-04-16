@@ -1,0 +1,3 @@
+ALTER TABLE users ADD COLUMN tenant_id BIGINT;
+ALTER TABLE product ADD COLUMN tenant_id BIGINT;
+ALTER TABLE orders ADD COLUMN tenant_id BIGINT;

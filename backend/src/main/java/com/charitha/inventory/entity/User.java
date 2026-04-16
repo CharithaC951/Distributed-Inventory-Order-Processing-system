@@ -20,6 +20,8 @@ public class User {
     @Column(nullable = false)
     private Role role;
 
+    private Long tenantId;
+
     public User() {
     }
 
@@ -43,6 +45,14 @@ public class User {
 
     public Role getRole() {
         return role;
+    }
+
+    public Long getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(Long tenantId) {
+        this.tenantId = tenantId;
     }
 
     public void setUsername(String username) {

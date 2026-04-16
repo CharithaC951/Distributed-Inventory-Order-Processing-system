@@ -10,6 +10,7 @@ public class Product {
     private Long id;
     private String name;
     private int stockQuantity;
+    private Long tenantId;
 
     public Product() {
     }
@@ -30,6 +31,14 @@ public class Product {
 
     public String getName() {
         return name;
+    }
+
+    public Long getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(Long tenantId) {
+        this.tenantId = tenantId;
     }
 
     public void setName(String name) {

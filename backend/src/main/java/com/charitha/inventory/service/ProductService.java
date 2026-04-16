@@ -3,7 +3,10 @@ package com.charitha.inventory.service;
 import com.charitha.inventory.entity.Product;
 import com.charitha.inventory.exception.ProductNotFoundException;
 import com.charitha.inventory.repository.ProductRepository;
+import com.charitha.inventory.security.TenantContext;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class ProductService {
@@ -18,8 +21,15 @@ public class ProductService {
         return productRepository.save(product);
     }
 
-    public Product getProductById(long productId) {
-        return productRepository.findById(productId)
-                .orElseThrow(()->new ProductNotFoundException(productId));
+    public Product getProductById(Long id) {
+        Long tenantId = TenantContext.getTenantId();
+
+        return productRepository.findByIdAndTenantId(id, tenantId)
+                .orElseThrow(() -> new ProductNotFoundException(id));
+    }
+
+    public List<Product> getAllProducts() {
+        Long tenantId = TenantContext.getTenantId();
+        return productRepository.findByTenantId(tenantId);
     }
 }

@@ -5,6 +5,8 @@ import com.charitha.inventory.service.ProductService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/products")
 public class ProductController {
@@ -24,6 +26,11 @@ public class ProductController {
     public ResponseEntity<Product> getProductById(@PathVariable long productId) {
         Product product = productService.getProductById(productId);
         return ResponseEntity.ok(product);
+    }
+
+    @GetMapping
+    public List<Product> getAllProducts() {
+        return productService.getAllProducts();
     }
 
 }
