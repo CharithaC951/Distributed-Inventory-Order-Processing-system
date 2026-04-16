@@ -5,6 +5,9 @@ import com.charitha.inventory.exception.InsufficientStockException;
 import com.charitha.inventory.exception.InvalidQuantityException;
 import com.charitha.inventory.exception.ProductNotFoundException;
 import com.charitha.inventory.repository.ProductRepository;
+import com.charitha.inventory.security.TenantContext;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -27,11 +30,22 @@ class InventoryServiceTest {
     @InjectMocks
     private InventoryService inventoryService;
 
+    @BeforeEach
+    void setUpTenant() {
+        TenantContext.setTenantId(1L);
+    }
+
+    @AfterEach
+    void clearTenant() {
+        TenantContext.clear();
+    }
+
     @Test
     void shouldDecreaseStockWhenEnoughInventoryExists() {
         Product product = new Product(1L, "Laptop", 10);
+        product.setTenantId(1L);
 
-        when(productRepository.findByIdForUpdate(1L)).thenReturn(Optional.of(product));
+        when(productRepository.findByIdAndTenantId(1L, 1L)).thenReturn(Optional.of(product));
 
         inventoryService.decreaseStock(1L, 3);
 
@@ -43,8 +57,9 @@ class InventoryServiceTest {
     @Test
     void shouldThrowExceptionWhenStockIsInsufficient(){
         Product product = new Product(1L, "Laptop", 3);
+        product.setTenantId(1L);
 
-        when(productRepository.findByIdForUpdate(1L)).thenReturn(Optional.of(product));
+        when(productRepository.findByIdAndTenantId(1L, 1L)).thenReturn(Optional.of(product));
 
         assertThrows(InsufficientStockException.class, () ->
                 inventoryService.decreaseStock(1L, 5)
@@ -58,13 +73,13 @@ class InventoryServiceTest {
         assertThrows(InvalidQuantityException.class, () ->
                 inventoryService.decreaseStock(1L, 0)
         );
-        verify(productRepository, never()).findByIdForUpdate(1L);
+        verify(productRepository, never()).findByIdAndTenantId(1L, 1L);
         verify(productRepository, never()).save(any());
     }
 
     @Test
     void shouldThrowExceptionWhenProductDoesNotExist() {
-        when(productRepository.findByIdForUpdate(1L)).thenReturn(Optional.empty());
+        when(productRepository.findByIdAndTenantId(1L, 1L)).thenReturn(Optional.empty());
 
         assertThrows(ProductNotFoundException.class, () ->
                 inventoryService.decreaseStock(1L, 2)
@@ -76,8 +91,9 @@ class InventoryServiceTest {
     @Test
     void shouldIncreaseStockWhenValidQuantityIsProvided(){
         Product product = new Product(1L, "Laptop", 10);
+        product.setTenantId(1L);
 
-        when(productRepository.findByIdForUpdate(1L)).thenReturn(Optional.of(product));
+        when(productRepository.findByIdAndTenantId(1L, 1L)).thenReturn(Optional.of(product));
 
         inventoryService.increaseStock(1L,5);
 
@@ -91,13 +107,13 @@ class InventoryServiceTest {
                 inventoryService.increaseStock(1L, 0)
         );
 
-        verify(productRepository, never()).findByIdForUpdate(1L);
+        verify(productRepository, never()).findByIdAndTenantId(1L, 1L);
         verify(productRepository, never()).save(any());
     }
 
     @Test
     void shouldThrowExceptionWhenIncreasingStockForNonExistingProduct() {
-        when(productRepository.findByIdForUpdate(1L)).thenReturn(Optional.empty());
+        when(productRepository.findByIdAndTenantId(1L, 1L)).thenReturn(Optional.empty());
 
         assertThrows(ProductNotFoundException.class, () ->
                 inventoryService.increaseStock(1L, 5)
