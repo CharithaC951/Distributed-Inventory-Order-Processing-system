@@ -1,12 +1,13 @@
-name: CI Pipeline
+name: Backend CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ main]
   pull_request:
+    branches: [ main]
 
 jobs:
-  build:
+  build-and-test:
     runs-on: ubuntu-latest
 
     defaults:
@@ -14,7 +15,7 @@ jobs:
         working-directory: backend
 
     steps:
-      - name: Checkout Code
+      - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Set up Java 21
@@ -22,9 +23,10 @@ jobs:
         with:
           distribution: temurin
           java-version: '21'
+          cache: maven
 
-      - name: Make Maven Wrapper Executable
+      - name: Make mvnw executable
         run: chmod +x mvnw
 
-      - name: Build Backend
-        run: ./mvnw clean verify -DskipTests=false
+      - name: Build and test
+        run: ./mvnw clean verify
