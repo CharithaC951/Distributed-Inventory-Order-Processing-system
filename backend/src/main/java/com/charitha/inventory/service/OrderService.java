@@ -7,6 +7,7 @@ import com.charitha.inventory.dto.OrderResponse;
 import com.charitha.inventory.entity.Order;
 import com.charitha.inventory.entity.OrderItem;
 import com.charitha.inventory.entity.OrderStatus;
+import com.charitha.inventory.exception.InvalidOrderStateException;
 import com.charitha.inventory.repository.OrderRepository;
 import com.charitha.inventory.security.TenantContext;
 import org.springframework.stereotype.Service;
@@ -86,6 +87,14 @@ public class OrderService {
         Order order = orderRepository.findByIdAndTenantId(id, tenantId)
                 .orElseThrow(() -> new OrderNotFoundException("Order not found with id: " + id));
 
+        if (order.getStatus() == OrderStatus.CANCELLED) {
+            throw new InvalidOrderStateException("Cancelled order cannot be confirmed");
+        }
+
+        if (order.getStatus() == OrderStatus.CONFIRMED) {
+            throw new InvalidOrderStateException("Order is already confirmed");
+        }
+
         order.setStatus(OrderStatus.CONFIRMED);
         Order savedOrder = orderRepository.save(order);
 
@@ -97,6 +106,14 @@ public class OrderService {
 
         Order order = orderRepository.findByIdAndTenantId(id, tenantId)
                 .orElseThrow(() -> new OrderNotFoundException("Order not found with id: " + id));
+
+        if (order.getStatus() == OrderStatus.CONFIRMED) {
+            throw new InvalidOrderStateException("Confirmed order cannot be cancelled");
+        }
+
+        if (order.getStatus() == OrderStatus.CANCELLED) {
+            throw new InvalidOrderStateException("Order is already cancelled");
+        }
 
         order.setStatus(OrderStatus.CANCELLED);
         Order savedOrder = orderRepository.save(order);

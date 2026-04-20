@@ -31,4 +31,16 @@ public class GlobalExceptionHandler {
     public Map<String, String> handleOrderNotFound(OrderNotFoundException ex) {
         return Map.of("error", ex.getMessage());
     }
+
+    @ExceptionHandler(InvalidOrderStateException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Map<String, String> handleInvalidOrderState(InvalidOrderStateException ex) {
+        return Map.of("error", ex.getMessage());
+    }
+
+    @ExceptionHandler(InventoryOperationFailedException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public Map<String, String> handleInventoryOperationFailed(InventoryOperationFailedException ex) {
+        return Map.of("error", ex.getMessage());
+    }
 }

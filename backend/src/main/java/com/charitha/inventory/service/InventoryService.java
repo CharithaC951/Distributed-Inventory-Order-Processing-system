@@ -6,7 +6,10 @@ import com.charitha.inventory.exception.InvalidQuantityException;
 import com.charitha.inventory.exception.ProductNotFoundException;
 import com.charitha.inventory.repository.ProductRepository;
 import com.charitha.inventory.security.TenantContext;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class InventoryService {
@@ -17,6 +20,12 @@ public class InventoryService {
         this.productRepository = productRepository;
     }
 
+    @Retryable(
+            retryFor = {RuntimeException.class},
+            maxAttempts = 3,
+            backoff = @Backoff(delay = 500)
+    )
+    @Transactional
     public void decreaseStock(Long productId, int quantity) {
         // we will implement this after writing the test
         if (quantity <= 0) {
@@ -34,6 +43,12 @@ public class InventoryService {
         productRepository.save(product);
     }
 
+    @Retryable(
+            retryFor = {RuntimeException.class},
+            maxAttempts = 3,
+            backoff = @Backoff(delay = 500)
+    )
+    @Transactional
     public void increaseStock(long productId, int quantity) {
         if(quantity <=0){
             throw new InvalidQuantityException(quantity);
